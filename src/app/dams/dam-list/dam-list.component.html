@@ -1,0 +1,7 @@
+<div *ngIf="damsAbbr" class="flex-container">
+  <ng-container *ngFor="let dam of damsAbbr">
+    <ng-container *ngIf="dam && dam !== 'HR'">
+      <app-generation-details class="flex-item" [selectedDam]="dam" [dam]="damList[dam]"></app-generation-details>
+    </ng-container>
+  </ng-container>
+</div>

@@ -1,0 +1,15 @@
+<button  mat-button color="accent" routerLink="../">Back</button>
+<ng-container *ngIf="genData && selectedDam">
+  <h2>Generation report for {{ selectedDam }}</h2>
+  <table class="gen-table">
+    <tr>
+      <th>Hour (24hr day)</th>
+      <th>Rate</th>
+    </tr>
+    <tr *ngFor="let hourlyRate of genData[selectedDam]; let idx = index">
+      <td>{{idx}}</td>
+      <td>{{hourlyRate}}</td>
+      <td *ngIf="timeOfDay === idx"><-- Current Hour</td>
+    </tr>
+  </table>
+</ng-container>

@@ -1,0 +1,5 @@
+.gen-table th,
+td {
+  padding: 0 8px;
+  text-align: right;
+}

@@ -1,0 +1,24 @@
+<mat-card *ngIf="selectedDam" class="card-container">
+  <mat-card-header *ngIf="dam">
+      <mat-card-title style="width: 100%">
+        {{ dam[0] }} ({{ selectedDam }})
+      </mat-card-title>
+      <mat-card-subtitle>{{ dam[1] }}</mat-card-subtitle>
+      <ng-container *ngIf="isGenerating; else isNotGenerating">
+        <mat-chip-list>
+          <mat-chip color="warn" selected>Generating</mat-chip>
+        </mat-chip-list>
+      </ng-container>
+      <ng-template #isNotGenerating>
+        <mat-chip-list>
+          <mat-chip color="accent" selected style="width: 120px">Not Generating</mat-chip>
+        </mat-chip-list>
+      </ng-template>
+  </mat-card-header>
+  <!-- <mat-card-content>
+    Generating Summary
+  </mat-card-content> -->
+  <mat-card-actions>
+    <button mat-raised-button color="primary" [routerLink]="['/dams', selectedDam]">Details</button>
+  </mat-card-actions>
+</mat-card>
