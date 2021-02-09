@@ -10,7 +10,7 @@ export class TableViewComponent {
   @Input() projectDetails: ProjectDetails[];
   @Input() weather: number = 31;
   @Input() summary: string = 'Generating from now until further notice.';
-  displayedColumns: string[] = [ 'status', 'abbr', 'name', 'state'];
+  displayedColumns: string[] = [ 'abbr', 'name', 'state', 'summary' ];
 
   constructor() {}
 

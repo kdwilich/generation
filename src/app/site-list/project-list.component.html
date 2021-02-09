@@ -5,15 +5,16 @@
   </mat-button-toggle>
 </mat-button-toggle-group>
 <mat-button-toggle-group name="viewType" class="float-right">
-  <mat-button-toggle value="table" [checked]="isTableView" (change)="isTableView = true">
+  <mat-button-toggle value="table" [checked]="isTableView">
     <mat-icon>table_rows</mat-icon>
   </mat-button-toggle>
-  <mat-button-toggle value="grid" [checked]="!isTableView" (change)="isTableView = false">
+  <mat-button-toggle value="grid" [checked]="!isTableView">
     <mat-icon>apps</mat-icon>
   </mat-button-toggle>
 </mat-button-toggle-group>
 
 <h2 class="pt-3">{{genSchedule?.date.fullDate}}</h2>
+<a [href]="swepcoSite" target="_blank">Swepco Source</a>
 
 <ng-container *ngIf="isLoading; else doneLoading">
   <div class="pt-4" *ngIf="isLoading === true">

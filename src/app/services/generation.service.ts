@@ -11,13 +11,15 @@ export class GenerationService {
   private corsProxy = 'https://cors-anywhere-kw.herokuapp.com/';
   private swepcoGenUrl = 'https://www.swpa.gov/gen/';
   public isLoading: boolean | 'failed';
+  public swepcoSource: string;
 
   constructor(private readonly http: HttpClient) {}
 
   public async getGenSchedule(day: WeekDay) {
+    const swepcoSource = this.swepcoGenUrl + day + '.htm';
     this.isLoading = true;
     return await this.http
-      .get(this.corsProxy + this.swepcoGenUrl + day + '.htm', { responseType: 'text' })
+      .get(this.corsProxy + swepcoSource, { responseType: 'text' })
       .pipe(
         retry(3),
         catchError((err) => {
@@ -26,6 +28,10 @@ export class GenerationService {
         })
       )
       .toPromise()
+      .then(htmlStr => {
+        this.swepcoSource = swepcoSource;
+        return htmlStr;
+      })
       .then(htmlStr => {
         if(htmlStr) {
           const date = this.findDate(htmlStr);
@@ -95,8 +101,74 @@ export class GenerationService {
     return genSchedule[currentHour] > 0;
   }
 
-  setStatus(genSchedule) {
-    return 
+  private arrayRange(arr: any[]) {
+    if (arr.length > 1) {
+      return [arr[0], arr[arr.length - 1] + 1];
+    } else {
+      return arr;
+    }
+  }
+
+  private convertTo12Hr(hour: number) {
+    const suffix = hour >= 12 ? 'pm' : 'am';
+    return ((hour + 11) % 12 + 1) + suffix;;
+  }
+
+  private setGenerationSummary(genSchedule) {
+    const genHrs: number[] = []
+    let status = '';
+    genSchedule.forEach((hr, i) => {
+      if (parseInt(hr) > 0) {
+        genHrs.push(i + 1);
+      }
+    });
+    if (genHrs.length === 24) {
+      status = 'Generating all day'
+    } else if (genHrs.length > 0) {
+      let timeRange = [];
+      let temp = [];
+      // group sequential numbers in an array
+      //  ex: [1,2,5,6,7] => [[1,2],[5,6,7]]
+      genHrs.forEach((hr, i) => {
+        if (i === 0) {
+          temp.push(hr);
+          return;
+        }
+        if (genHrs[i - 1] != genHrs[i] - 1) {
+          timeRange.push(this.arrayRange(temp));
+          temp = [];
+        }
+        temp.push(hr);
+      })
+      timeRange.push(this.arrayRange(temp));
+      // convert 2d timeRange number array to 12hr time, ex: [[15,12],[3]] => [[3pm, 12pm],[3am]]
+      timeRange = timeRange.map(r => r.map(k => this.convertTo12Hr(k)));
+      // set rangeStr like the following ex:
+      //  [[3am,5am]] => 3-5am
+      //  [[3am,5am],[10am,3pm]] => 3-5am and 10am-3pm
+      //  [[3am,5am],[10am,3pm],[7pm,11pm]] => 3-5am, 10am-3pm, and 7-11pm
+      let rangeStr = ''
+      if (timeRange.length === 1) {
+        const [[start, end]] = timeRange;
+        rangeStr = start + (end ? '-' + end : '');
+      } else if (timeRange.length === 2) {
+        const [[start1, end1], [start2, end2]] = timeRange;
+        rangeStr = start1 + '-' + end1 + ' and ' + start2 + (end2 ? '-' + end2 : '');
+      } else {
+        timeRange.forEach(([start, end], i) => {
+          if (i !== timeRange.length - 1)
+            rangeStr = rangeStr + start + '-' + end + ', '
+          else 
+            rangeStr = rangeStr + 'and ' + start + (end ? '-' + end : '')
+        })
+      }
+
+      
+      status = 'Generating from ' + rangeStr.replace(/(am|pm)(-\d+(?:\1))/g, '$2');
+    } else {
+      status = 'Not generating';
+    }
+    return status;
   }
 
   private createProjectDetailsObj(rawProjectDetails, genSchedules): ProjectDetails[] {
@@ -106,8 +178,7 @@ export class GenerationService {
       return {
         lakeNum,
         genSchedule,
-        isGenerating: this.isGenerating(genSchedule),
-        status: this.setStatus(genSchedule),
+        summary: this.setGenerationSummary(genSchedule),
         abbr,
         name,
         state,

@@ -26,6 +26,9 @@ export class ProjectListComponent implements OnInit {
   get isLoading(): boolean | 'failed' {
     return this.genService.isLoading;
   }
+  get swepcoSite(): string {
+    return this.genService.swepcoSource;
+  }
 
   constructor(
     private genService: GenerationService,
