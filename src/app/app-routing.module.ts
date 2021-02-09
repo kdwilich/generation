@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { ProjectListComponent } from './site-list/project-list.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/dams', pathMatch: 'full' },
+  { path: '', component: ProjectListComponent },
 ];
 
 @NgModule({

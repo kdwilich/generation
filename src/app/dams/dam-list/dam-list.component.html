@@ -1,7 +1,49 @@
-<div *ngIf="damsAbbr" class="flex-container">
-  <ng-container *ngFor="let dam of damsAbbr">
-    <ng-container *ngIf="dam && dam !== 'HR'">
-      <app-generation-details class="flex-item" [selectedDam]="dam" [dam]="damList[dam]"></app-generation-details>
+<mat-button-toggle-group name="fontStyle" class="float-right">
+  <mat-button-toggle value="table" [checked]="view === 'table'" (change)="changeView($event.value)">
+    <mat-icon>table_rows</mat-icon>
+  </mat-button-toggle>
+  <mat-button-toggle value="grid" [checked]="view === 'grid'" (change)="changeView($event.value)">
+    <mat-icon>apps</mat-icon>
+  </mat-button-toggle>
+</mat-button-toggle-group>
+<ng-container *ngIf="view === 'grid'; else showTable">
+  <div *ngIf="damsAbbr; else isLoading" class="flex-container">
+    <ng-container *ngFor="let dam of damsAbbr">
+      <ng-container *ngIf="dam && dam !== 'HR'">
+        <app-generation-details
+          class="flex-item"
+          [siteNameAbbr]="dam"
+          [siteName]="damList[dam][0]"
+          [siteState]="damList[dam][1]"
+          [isGenerating]="isGenerating(dam)"
+        ></app-generation-details>
+      </ng-container>
     </ng-container>
+  </div>
+  <ng-template #isLoading>
+    Loading...
+  </ng-template>
+</ng-container>
+<ng-template #showTable>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-100">
+    <ng-container matColumnDef="site">
+      <th mat-header-cell *matHeaderCellDef> Site </th>
+      <td mat-cell *matCellDef="let element"> {{element.site}} </td>
+    </ng-container>
+    <ng-container matColumnDef="state">
+      <th mat-header-cell *matHeaderCellDef> State </th>
+      <td mat-cell *matCellDef="let element"> {{element.state}} </td>
+    </ng-container>
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef> Status </th>
+    <td mat-cell *matCellDef="let element"> {{element.status}} </td>
   </ng-container>
-</div>
+  <ng-container matColumnDef="details">
+    <th mat-header-cell *matHeaderCellDef> Details </th>
+    <td mat-cell *matCellDef="let element"> {{element.details}} </td>
+  </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</ng-template>

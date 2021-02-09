@@ -14,7 +14,7 @@
   max-width: 100%;
 }
 
-@media only screen and (min-width: 576px) {
+@media only screen and (max-width: 576px) {
   .container,
   .container-sm,
   .container-md,
@@ -24,7 +24,7 @@
   }
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 576px) {
   .container,
   .container-sm {
     max-width: 540px;
@@ -36,7 +36,7 @@
   }
 }
 
-@media only screen and (min-width: 992px) {
+@media only screen and (min-width: 768px) {
   .container,
   .container-sm,
   .container-md {

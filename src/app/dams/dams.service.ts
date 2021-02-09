@@ -9,27 +9,7 @@ export class DamsService {
   timeOfDay: number;
   damData: any;
   genDataFrame: any;
-  lakeDir = {
-    BBD: ['Broken Bow', 'Oklahoma'],
-    DEN: ['Denison', 'Okla-Texas'],
-    KEY: ['Keystone', 'Oklahoma'],
-    FGD: ['Fort Gibson', 'Oklahoma'],
-    WFD: ['Webbers Falls L&D', 'Oklahoma'],
-    TKD: ['Tenkiller', 'Oklahoma'],
-    EUF: ['Eufaula', 'Oklahoma'],
-    RSK: ['Robert S. Kerr L&D', 'Oklahoma'],
-    OZK: ['Ozark L&D', 'Arkansas'],
-    OZD: ['Ozark L&D', 'Arkansas'],
-    DAD: ['Dardanelle L&D', 'Arkansas'],
-    BEV: ['Beaver', 'Arkansas'],
-    TRD: ['Table Rock', 'Missouri'],
-    BSD: ['Bull Shoals', 'Arkansas'],
-    NFD: ['Norfork', 'Arkansas'],
-    GFD: ['Greers Ferry', 'Arkansas'],
-    STD: ['Stockton', 'Missouri'],
-    HST: ['Harry S Truman', 'Missouri'],
-    CAN: ['Clarence Cannon', 'Missouri']
-  };
+  lakeDir: any;
   sortedLakeDir
   columns: any;
   private corsProxy = 'https://cors-anywhere-kw.herokuapp.com/';
@@ -37,6 +17,27 @@ export class DamsService {
   constructor(private readonly http: HttpClient) {
     this.getGenerationSchedules();
     this.timeOfDay = (new Date).getHours();
+    this.lakeDir = {
+      BBD: ['Broken Bow', 'Oklahoma'],
+      DEN: ['Denison', 'Okla-Texas'],
+      KEY: ['Keystone', 'Oklahoma'],
+      FGD: ['Fort Gibson', 'Oklahoma'],
+      WFD: ['Webbers Falls L&D', 'Oklahoma'],
+      TKD: ['Tenkiller', 'Oklahoma'],
+      EUF: ['Eufaula', 'Oklahoma'],
+      RSK: ['Robert S. Kerr L&D', 'Oklahoma'],
+      OZK: ['Ozark L&D', 'Arkansas'],
+      OZD: ['Ozark L&D', 'Arkansas'],
+      DAD: ['Dardanelle L&D', 'Arkansas'],
+      BEV: ['Beaver', 'Arkansas'],
+      TRD: ['Table Rock', 'Missouri'],
+      BSD: ['Bull Shoals', 'Arkansas'],
+      NFD: ['Norfork', 'Arkansas'],
+      GFD: ['Greers Ferry', 'Arkansas'],
+      STD: ['Stockton', 'Missouri'],
+      HST: ['Harry S Truman', 'Missouri'],
+      CAN: ['Clarence Cannon', 'Missouri']
+    };
     this.sortedLakeDir = this.sortObj(this.lakeDir)
   }
 
@@ -60,9 +61,25 @@ export class DamsService {
       [...formattedTable].slice(0, formattedTable.length - 1)
     ];
     this.columns = columns;
+
     this.genDataFrame = new DataFrame(data, columns);
     this.damData = JSON.parse(this.genDataFrame.toJSON());
+    if (this.lakeDir) {
+      
+    console.log(this.createObj(columns, this.damData));
+    }
     console.log('dataFrame: ', JSON.parse(this.genDataFrame.toJSON()));
+  }
+
+  createObj(siteAbbrs: string[], siteData) {
+    const obj: any[] = [];
+    siteAbbrs.map(siteNameAbbr => {
+      if (siteNameAbbr !== 'HR') {
+        const [ siteName, state ] = this.sortedLakeDir[siteNameAbbr];
+        obj.push({ siteNameAbbr, siteName, state, projected_24hr: {...siteData[siteNameAbbr]}});
+      }
+    })
+    return obj;
   }
 
   isGenerating(dam) {

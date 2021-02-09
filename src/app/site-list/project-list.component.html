@@ -1,0 +1,37 @@
+
+<mat-button-toggle-group name="weekDays" aria-label="Week Day">
+  <mat-button-toggle *ngFor="let day of weekDays" [checked]="day.value === selectedDay" [value]="day.value" [routerLink]="[]" [queryParams]="{day: day.value}">
+    {{ day.label }}
+  </mat-button-toggle>
+</mat-button-toggle-group>
+<mat-button-toggle-group name="viewType" class="float-right">
+  <mat-button-toggle value="table" [checked]="isTableView">
+    <mat-icon>table_rows</mat-icon>
+  </mat-button-toggle>
+  <mat-button-toggle value="grid" [checked]="!isTableView">
+    <mat-icon>apps</mat-icon>
+  </mat-button-toggle>
+</mat-button-toggle-group>
+
+<h2 class="pt-3">{{genSchedule?.date.fullDate}}</h2>
+<a [href]="swepcoSite" target="_blank">Swepco Source</a>
+
+<ng-container *ngIf="isLoading; else doneLoading">
+  <div class="pt-4" *ngIf="isLoading === true">
+    <mat-spinner class="mx-auto"></mat-spinner>
+  </div>
+  <ng-container *ngIf="isLoading === 'failed'">
+    <p>There was an error loading the content. Try refreshing your browser or checking your internet connection</p>
+    <button mat-raised-button color="primary" aria-label="Refresh browser" (click)="reloadWindow()">
+      <mat-icon>refresh</mat-icon> Refresh
+    </button>
+  </ng-container>
+</ng-container>
+<ng-template #doneLoading>
+  <ng-container *ngIf="isTableView; else isGridView">
+    <app-table-view [projectDetails]="genSchedule?.projectDetails"></app-table-view>
+  </ng-container>
+  <ng-template #isGridView>
+    <app-grid-view></app-grid-view>
+  </ng-template>
+</ng-template>
