@@ -5,7 +5,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:pages": "ng build --prod=true --outputPath=docs --baseHref=/generation/ && cp docs/index.html docs/404.html",
+    "predeployment":"npm run build:docs && npm run cp:idx-404",
+    "build:docs": "ng build --prod --outputPath docs --baseHref /generation/",
+    "cp:idx-404": "cp docs/index.html docs/404.html",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
