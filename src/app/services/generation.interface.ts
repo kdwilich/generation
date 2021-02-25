@@ -1,5 +1,12 @@
 export type WeekDay = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
 
+/**
+ * 0 Loaded
+ * 1 Loading
+ * 2 Failed to load
+ */
+export type LoadingState = 0 | 1 | 2;
+
 export interface SelectItem {
   label: string;
   value: string;

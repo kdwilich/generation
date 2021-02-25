@@ -16,12 +16,12 @@
 <h2 class="pt-3">{{genSchedule?.date.fullDate}}</h2>
 <a [href]="swepcoSite" target="_blank">Swepco Source</a>
 
-<ng-container *ngIf="isLoading; else doneLoading">
-  <div class="pt-4" *ngIf="isLoading === true">
+<ng-container *ngIf="loadingState > 0; else doneLoading">
+  <div class="pt-4" *ngIf="loadingState == 1">
     <mat-spinner class="mx-auto"></mat-spinner>
   </div>
-  <ng-container *ngIf="isLoading === 'failed'">
-    <p>There was an error loading the content. Try refreshing your browser or checking your internet connection</p>
+  <ng-container *ngIf="loadingState == 2">
+    <p>There was an error loading the content. Try refreshing your browser or checking your internet connection or check the source link to see if there is an error there.</p>
     <button mat-raised-button color="primary" aria-label="Refresh browser" (click)="reloadWindow()">
       <mat-icon>refresh</mat-icon> Refresh
     </button>

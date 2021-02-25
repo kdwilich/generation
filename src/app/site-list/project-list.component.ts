@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { GenerationService } from '../services/generation.service';
-import { WeekDay, SelectItem } from '../services/generation.interface';
+import { WeekDay, SelectItem, LoadingState } from '../services/generation.interface';
 import { ActivatedRoute, Router } from '@angular/router';
+import { query } from '@angular/animations';
 
 @Component({
   selector: 'app-project-list',
@@ -11,20 +12,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class ProjectListComponent implements OnInit {
   isTableView: boolean = true;
   genSchedule
-  selectedDay: WeekDay;
   date
-  weekDays: SelectItem[] = [
-    { label: 'Sunday', value: 'sun' },
-    { label: 'Monday', value: 'mon' },
-    { label: 'Tuesday', value: 'tue' },
-    { label: 'Wednesday', value: 'wed' },
-    { label: 'Thursday', value: 'thu' },
-    { label: 'Friday', value: 'fri' },
-    { label: 'Saturday', value: 'sat' }
-  ]
-  
-  get isLoading(): boolean | 'failed' {
-    return this.genService.isLoading;
+  selectedDay: WeekDay;
+  weekDays: SelectItem[];
+
+  get loadingState(): LoadingState {
+    return this.genService.loadingState;
   }
   get swepcoSite(): string {
     return this.genService.swepcoSource;
@@ -37,19 +30,41 @@ export class ProjectListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.route.queryParams.subscribe(queryParam => {
-      if (queryParam.day) {
-        this.selectedDay = queryParam.day;
-        this.setSchedule();
-      } else {
-        this.selectedDay = (new Date).toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase() as WeekDay;
-        this.router.navigate([], {
-          relativeTo: this.route, 
-          queryParams: { day: this.selectedDay },
-          replaceUrl: true,
-        });
+    const currentDay = (new Date).toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase();
+    const currentDayValue = 'today';
+    this.weekDays = [
+      { label: 'Sunday', value: 'sun' },
+      { label: 'Monday', value: 'mon' },
+      { label: 'Tuesday', value: 'tue' },
+      { label: 'Wednesday', value: 'wed' },
+      { label: 'Thursday', value: 'thu' },
+      { label: 'Friday', value: 'fri' },
+      { label: 'Saturday', value: 'sat' }
+    ].map(day => {return {...day, value: (day.value === currentDay ? /*currentDayValue*/day.value : day.value) }});
+
+    console.log(this.weekDays);
+
+    this.route.queryParams.subscribe(({day}) => {
+      let weekDayMatch: SelectItem[] = [];
+
+      if (day && day.length >= 3) {
+        weekDayMatch = this.weekDays.filter(({value}) => day.indexOf(value) > -1);
       }
+
+      this.selectedDay = (weekDayMatch[0]?.value || currentDay) as WeekDay;
+
+      this.selectedDay === day
+        ? this.setSchedule()
+        : this.setDayQueryParam(this.selectedDay);
     })
+  }
+
+  setDayQueryParam(day) {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { day },
+      replaceUrl: true,
+    });
   }
 
   async setSchedule() {
@@ -58,7 +73,7 @@ export class ProjectListComponent implements OnInit {
     this.date = this.genSchedule?.date;
   }
 
-  reloadWindow(): void { 
+  reloadWindow(): void {
     window.location.reload();
   }
 }
