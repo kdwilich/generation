@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { WeekDay, ProjectDetails } from './generation.interface';
+import { WeekDay, ProjectDetails, LoadingState } from './generation.interface';
 import { catchError, retry } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
 
@@ -10,49 +10,40 @@ import { EMPTY } from 'rxjs';
 export class GenerationService {
   private corsProxy = 'https://cors-anywhere-kw.herokuapp.com/';
   private swepcoGenUrl = 'https://www.swpa.gov/gen/';
-  public isLoading: boolean | 'failed';
+  public loadingState: LoadingState; // 0: loaded, 1: loading, 2: failed to load
   public swepcoSource: string;
 
   constructor(private readonly http: HttpClient) {}
 
   public async getGenSchedule(day: WeekDay) {
-    const swepcoSource = this.swepcoGenUrl + day + '.htm';
-    this.isLoading = true;
+    this.swepcoSource = this.swepcoGenUrl + day + '.htm';
+    this.loadingState = 'loading';
     return await this.http
-      .get(this.corsProxy + swepcoSource, { responseType: 'text' })
+      .get(this.corsProxy + this.swepcoSource, { responseType: 'text' })
       .pipe(
         retry(3),
         catchError((err) => {
           console.log('Error loading content:', err);
           return EMPTY
         })
-      )
-      .toPromise()
-      .then(htmlStr => {
-        this.swepcoSource = swepcoSource;
-        return htmlStr;
-      })
+      ).toPromise()
       .then(htmlStr => {
         if(htmlStr) {
           const date = this.findDate(htmlStr);
-  
+
           const rawGenSchedules = this.findTable(htmlStr, ['HR ', 'TOT ']);
           const genSchedules = this.createGenScheduleObj(rawGenSchedules);
-  
+
           const rawProjectDetails = this.findTable(htmlStr, ['No. ', 'The project table ']).slice(1);
           const projectDetails = this.createProjectDetailsObj(rawProjectDetails, genSchedules);
-          
+
           return { date, projectDetails }
         } else {
           return undefined;
         }
       })
       .then(data => {
-        if(data) {
-          this.isLoading = false;
-        } else {
-          this.isLoading = 'failed';
-        }
+        data ? this.loadingState = 'loaded' : this.loadingState = 'failed';
         return data;
       })
       .catch(err => console.log(err));
@@ -116,14 +107,14 @@ export class GenerationService {
 
   private setGenerationSummary(genSchedule) {
     const genHrs: number[] = []
-    let status = '';
+    let summary = '';
     genSchedule.forEach((hr, i) => {
       if (parseInt(hr) > 0) {
         genHrs.push(i + 1);
       }
     });
     if (genHrs.length === 24) {
-      status = 'Generating all day'
+      summary = 'Generating all day'
     } else if (genHrs.length > 0) {
       let timeRange = [];
       let temp = [];
@@ -147,7 +138,7 @@ export class GenerationService {
       //  [[3am,5am]] => 3-5am
       //  [[3am,5am],[10am,3pm]] => 3-5am and 10am-3pm
       //  [[3am,5am],[10am,3pm],[7pm,11pm]] => 3-5am, 10am-3pm, and 7-11pm
-      let rangeStr = ''
+      let rangeStr = '';
       if (timeRange.length === 1) {
         const [[start, end]] = timeRange;
         rangeStr = start + (end ? '-' + end : '');
@@ -158,27 +149,28 @@ export class GenerationService {
         timeRange.forEach(([start, end], i) => {
           if (i !== timeRange.length - 1)
             rangeStr = rangeStr + start + '-' + end + ', '
-          else 
+          else
             rangeStr = rangeStr + 'and ' + start + (end ? '-' + end : '')
         })
       }
 
-      
-      status = 'Generating from ' + rangeStr.replace(/(am|pm)(-\d+(?:\1))/g, '$2');
+
+      summary = 'Generating from ' + rangeStr.replace(/(am|pm)(-\d+(?:\1))/g, '$2');
     } else {
-      status = 'Not generating';
+      summary = 'Not generating';
     }
-    return status;
+    return summary;
   }
 
   private createProjectDetailsObj(rawProjectDetails, genSchedules): ProjectDetails[] {
     return rawProjectDetails.map(project => {
       const [lakeNum, abbr, name, state, numUnits, plantCapacity, fullPowerDischarge] = project;
       const genSchedule = genSchedules[abbr];
+      const summary = this.setGenerationSummary(genSchedule);
       return {
         lakeNum,
         genSchedule,
-        summary: this.setGenerationSummary(genSchedule),
+        summary,
         abbr,
         name,
         state,
