@@ -50,8 +50,8 @@ export class ProjectListComponent implements OnInit {
     this.route.queryParams.subscribe(({day}) => {
       let genDay: string;
 
-      if ( !day ) { // if day is undefined route to current day and return
-        this.navigateTo(this.today.weekDay);
+      if (!day) { // if day is undefined route to current day and return
+        this.navigateTo(this.today.value);
         return;
       } else {
         const weekDayMatch = this.weekDays.filter(({value}) => day.indexOf(value) > -1)[0];
