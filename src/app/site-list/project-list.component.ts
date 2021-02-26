@@ -13,8 +13,9 @@ export class ProjectListComponent implements OnInit {
   isTableView: boolean = true;
   genSchedule
   date
+  today: { weekDay: string; value: WeekDay };
   selectedDay: WeekDay;
-  weekDays: SelectItem[];
+  weekDays: any[];
 
   get loadingState(): LoadingState {
     return this.genService.loadingState;
@@ -30,8 +31,10 @@ export class ProjectListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const currentDay = (new Date).toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase();
-    const currentDayValue = 'today';
+    this.today = {
+      weekDay: (new Date).toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase(),
+      value: 'today'
+    }
     this.weekDays = [
       { label: 'Sunday', value: 'sun' },
       { label: 'Monday', value: 'mon' },
@@ -40,26 +43,44 @@ export class ProjectListComponent implements OnInit {
       { label: 'Thursday', value: 'thu' },
       { label: 'Friday', value: 'fri' },
       { label: 'Saturday', value: 'sat' }
-    ].map(day => {return {...day, value: (day.value === currentDay ? /*currentDayValue*/day.value : day.value) }});
+    ].map(day => day.value === this.today.weekDay ? { ...day, currentDay: true} : day );
 
     console.log(this.weekDays);
 
     this.route.queryParams.subscribe(({day}) => {
-      let weekDayMatch: SelectItem[] = [];
+      let genDay: string;
 
-      if (day && day.length >= 3) {
-        weekDayMatch = this.weekDays.filter(({value}) => day.indexOf(value) > -1);
+      if ( !day ) { // if day is undefined route to current day and return
+        this.navigateTo(this.today.weekDay);
+        return;
+      } else {
+        const weekDayMatch = this.weekDays.filter(({value}) => day.indexOf(value) > -1)[0];
+        if (weekDayMatch) {
+          if (day === weekDayMatch.value) {
+            // if day and value are the same load schedule data
+            genDay = weekDayMatch.value;
+            this.selectedDay = weekDayMatch.value;
+          } else {
+            // else navigate to the closest matched day and return
+            this.navigateTo(weekDayMatch.value);
+            return;
+          }
+        } else if (day === this.today.value) {
+          // if day is today load schedule data
+          this.selectedDay = this.today.value;
+          genDay = this.today.weekDay;
+        } else {
+          // else the query parameter doesn't match any known values, route to current day and return
+          this.navigateTo(this.today.weekDay);
+          return;
+        }
       }
 
-      this.selectedDay = (weekDayMatch[0]?.value || currentDay) as WeekDay;
-
-      this.selectedDay === day
-        ? this.setSchedule()
-        : this.setDayQueryParam(this.selectedDay);
+      this.loadGenSchedule(genDay);
     })
   }
 
-  setDayQueryParam(day) {
+  navigateTo(day) {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { day },
@@ -67,8 +88,8 @@ export class ProjectListComponent implements OnInit {
     });
   }
 
-  async setSchedule() {
-    this.genSchedule = await this.genService.getGenSchedule(this.selectedDay);
+  async loadGenSchedule(day) {
+    this.genSchedule = await this.genService.getGenSchedule(day);
     console.log(this.genSchedule);
     this.date = this.genSchedule?.date;
   }

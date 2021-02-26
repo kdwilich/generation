@@ -17,7 +17,7 @@ export class GenerationService {
 
   public async getGenSchedule(day: WeekDay) {
     this.swepcoSource = this.swepcoGenUrl + day + '.htm';
-    this.loadingState = 1;
+    this.loadingState = 'loading';
     return await this.http
       .get(this.corsProxy + this.swepcoSource, { responseType: 'text' })
       .pipe(
@@ -43,7 +43,7 @@ export class GenerationService {
         }
       })
       .then(data => {
-        data ? this.loadingState = 0 : this.loadingState = 2;
+        data ? this.loadingState = 'loaded' : this.loadingState = 'failed';
         return data;
       })
       .catch(err => console.log(err));
