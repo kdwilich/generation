@@ -3,8 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { ProjectDetails, LoadingState } from './generation.interface';
 import { catchError, retry } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
-import { DayService } from './day.service';
-import { WeekDay } from './day.interface';
 
 @Injectable({
   providedIn: 'root'

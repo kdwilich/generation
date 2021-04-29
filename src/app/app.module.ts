@@ -8,18 +8,13 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HeaderComponent } from './header/header.component';
-import { DamsModule } from './dams/dams.module';
 import { ProjectListModule } from './site-list/project-list.module';
-import { ButtonGroupComponent } from './shared/button-group/button-group.component';
-import { TooltipDirective } from './shared/tooltip/tooltip.directive';
 import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent,
-    ButtonGroupComponent,
-    TooltipDirective
+    HeaderComponent
   ],
   imports: [
     CommonModule,
@@ -28,12 +23,11 @@ import { CommonModule } from '@angular/common';
     HttpClientModule,
     AppRoutingModule,
     RouterModule,
-    DamsModule,
     ProjectListModule,
     MatToolbarModule
   ],
   providers: [],
-  exports: [TooltipDirective],
+  exports: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

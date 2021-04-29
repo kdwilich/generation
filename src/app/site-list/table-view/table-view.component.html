@@ -4,10 +4,10 @@
     <tr>
       <th *ngFor="let col of columns">
         {{col.label}}
-        <div
+        <!-- <div
           *ngIf="col.value === 'genSchedule'"
           class="info-icon"
-        ><fa-icon [icon]="faInfoCircle"></fa-icon></div>
+        ><fa-icon [icon]="faInfoCircle"></fa-icon></div> -->
       </th>
     </tr>
     <tr *ngFor="let row of projectDetails">
@@ -17,7 +17,6 @@
             <div class="hour-rate-bar mx-1"
               [style]="{'height': rate + 'px'}"
             ></div>
-            <!-- <div class="hour-rate-text">{{rate}} &nbsp; </div> -->
           </div>
         </div>
         <ng-template #defaultCol>
