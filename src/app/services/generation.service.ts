@@ -91,16 +91,6 @@ export class GenerationService {
     return { fullDate, weekDay, month, day, year };
   }
 
-  private getSites(html: string) {
-    const siteAbbrs = /(?<=^\s*HR.*)[A-Z]{3}.*?/gm;
-    const sites: string[] = [];
-    let match;
-    while (match = siteAbbrs.exec(html)) {
-      sites.push(match[0])
-    }
-    return sites;
-  }
-
   public isGenerating(genSchedule): boolean {
     const currentHour = (new Date()).getHours();
     return genSchedule[currentHour] > 0;
