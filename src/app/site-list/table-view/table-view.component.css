@@ -1,0 +1,58 @@
+table {
+  border: 1px solid var(--default);
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table tr:nth-child(even) {
+  background-color: var(--gray);
+}
+
+table tr:hover {
+  background-color: #ddd;
+}
+
+table th,
+table td {
+  padding: var(--space-3);
+}
+
+table th {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-4);
+  background-color: var(--header);
+  color: var(--primary-contrast);
+  font-weight: 500;
+  font-size: 16px;
+  text-align: left;
+}
+
+.info-icon { color: var(--primary); }
+.info-icon:hover { color: var(--primary-darker); }
+.info-icon:visited { color: var(--primary-contrast); }
+
+.schedule-container {
+  display: flex;
+  align-items: flex-end;
+  height: 40px;
+}
+
+.hour-rate-bar {
+  --width: 5px;
+
+  background-color: var(--hour-rate-bar);
+  border-radius: calc(var(--width) / 2);
+  width: var(--width);
+  min-height: var(--width);
+  /* max-height: 50px; */
+  text-align: center;
+  font-size: 12px;
+}
+
+.hour-rate-text {
+  transform: rotate(292deg);
+  border-bottom: 1px solid var(--hour-rate-bar);
+  text-align: end;
+  line-height: 1.3;
+}
+

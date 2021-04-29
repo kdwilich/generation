@@ -7,28 +7,27 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { NavComponent } from './nav/nav.component';
-import { DamsModule } from './dams/dams.module';
+import { HeaderComponent } from './header/header.component';
 import { ProjectListModule } from './site-list/project-list.module';
-import { GenerationScheduleComponent } from './generation-schedule/generation-schedule.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavComponent,
-    GenerationScheduleComponent
+    HeaderComponent
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
     RouterModule,
-    DamsModule,
     ProjectListModule,
     MatToolbarModule
   ],
   providers: [],
+  exports: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

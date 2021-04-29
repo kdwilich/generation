@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ProjectListComponent } from './project-list.component';
 import { GridViewComponent } from './grid-view/grid-view.component';
 import { TableViewComponent } from './table-view/table-view.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,6 +24,7 @@ import { RouterModule } from '@angular/router';
   imports: [
     CommonModule,
     RouterModule,
+    FontAwesomeModule,
     MatCardModule,
     MatButtonModule,
     MatChipsModule,

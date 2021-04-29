@@ -38,15 +38,35 @@
 .px-4 { padding-left:   var(--space-4); padding-right:  var(--space-4) }
 .py-4 { padding-top:    var(--space-4); padding-bottom: var(--space-4) }
 
+.p-5  { padding:        var(--space-5) }
+.pt-5 { padding-top:    var(--space-5) }
+.pr-5 { padding-right:  var(--space-5) }
+.pb-5 { padding-bottom: var(--space-5) }
+.pl-5 { padding-left:   var(--space-5) }
+.px-5 { padding-left:   var(--space-5); padding-right:  var(--space-5) }
+.py-5 { padding-top:    var(--space-5); padding-bottom: var(--space-5) }
+
+.p-6  { padding:        var(--space-6) }
+.pt-6 { padding-top:    var(--space-6) }
+.pr-6 { padding-right:  var(--space-6) }
+.pb-6 { padding-bottom: var(--space-6) }
+.pl-6 { padding-left:   var(--space-6) }
+.px-6 { padding-left:   var(--space-6); padding-right:  var(--space-6) }
+.py-6 { padding-top:    var(--space-6); padding-bottom: var(--space-6) }
+
 .px-n1 { padding-left: -var(--space-1); padding-right: -var(--space-1); }
 .px-n2 { padding-left: -var(--space-2); padding-right: -var(--space-2); }
 .px-n3 { padding-left: -var(--space-3); padding-right: -var(--space-3); }
 .px-n4 { padding-left: -var(--space-4); padding-right: -var(--space-4); }
+.px-n5 { padding-left: -var(--space-5); padding-right: -var(--space-5); }
+.px-n6 { padding-left: -var(--space-6); padding-right: -var(--space-6); }
 
 .py-n1 { padding-top: -var(--space-1); padding-bottom: -var(--space-1); }
 .py-n2 { padding-top: -var(--space-2); padding-bottom: -var(--space-2); }
 .py-n3 { padding-top: -var(--space-3); padding-bottom: -var(--space-3); }
 .py-n4 { padding-top: -var(--space-4); padding-bottom: -var(--space-4); }
+.py-n5 { padding-top: -var(--space-5); padding-bottom: -var(--space-5); }
+.py-n6 { padding-top: -var(--space-6); padding-bottom: -var(--space-6); }
 
 .pt-auto { padding-top: auto }
 .pr-auto { padding-right: auto }
