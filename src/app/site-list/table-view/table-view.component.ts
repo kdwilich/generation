@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { ProjectDetails } from 'src/app/services/generation.interface';
+import { ProjectDetails, SelectItem } from 'src/app/services/generation.interface';
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-table-view',
@@ -10,8 +11,14 @@ export class TableViewComponent {
   @Input() projectDetails: ProjectDetails[];
   @Input() weather: number = 31;
   @Input() summary: string = 'Generating from now until further notice.';
-  displayedColumns: string[] = [ 'abbr', 'name', 'state', 'summary' ];
+  @Input() columns: SelectItem[];
+  faInfoCircle = faInfoCircle;
 
-  constructor() {}
+  constructor() { }
 
+  makeRelative(arr: number[]): number[] {
+    const maxValue = Math.max(...arr);
+    const maxHeight = 40;
+    return arr.map((num: number) => Math.round(num / maxValue * maxHeight));
+  }
 }

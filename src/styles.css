@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-@import "@angular/material/prebuilt-themes/indigo-pink.css";
+@import "./variables.css";
 @import "./css_utils/_index.css";
 
 html,
@@ -13,19 +13,60 @@ body {
 
 ::-webkit-scrollbar {
   width: 10px;
+  border-radius: 6px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
+  background: #F2F2F2;
+  }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: #888;
+  border-radius: 6px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+button {
+  background-color: var(--primary);
+  border: 1px solid var(--primary-darker);
+  color: var(--primary-contrast);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+}
+
+.tooltip_show {
+  opacity: 1;
+}
+
+.tooltip {
+  display: inline-flex;
+  align-items: center;
+  position: absolute;
+  max-width: 90%;
+  z-index: 1000;
+}
+
+.tooltip-arrow {
+  width: 0px;
+  height: 0px;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid var(--tool-tip);
+}
+
+.tooltip-text {
+  background: var(--tool-tip);
+  border-radius: 6px;
+  height: 20px;
+  font-size: 12px;
+  text-align: center;
+  color: #f8f8f2;
+  padding: 4px 8px;
+}
+

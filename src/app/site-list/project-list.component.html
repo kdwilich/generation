@@ -1,23 +1,19 @@
 
-<mat-button-toggle-group name="weekDays" aria-label="Week Day">
-  <mat-button-toggle *ngFor="let day of weekDays" [checked]="day.value === selectedDay || day.currentDay" [value]="day.value" [routerLink]="[]" [queryParams]="{day: day.currentDay ? today.value : day.value}">
-    {{ day.label }}
-  </mat-button-toggle>
-</mat-button-toggle-group>
-<mat-button-toggle-group name="viewType" class="float-right">
+<!-- <mat-button-toggle-group name="viewType" class="float-right">
   <mat-button-toggle value="table" [checked]="isTableView">
     <mat-icon>table_rows</mat-icon>
   </mat-button-toggle>
   <mat-button-toggle value="grid" [checked]="!isTableView">
     <mat-icon>apps</mat-icon>
   </mat-button-toggle>
-</mat-button-toggle-group>
+</mat-button-toggle-group> -->
 
-<h2 class="pt-3">{{genSchedule?.date.fullDate}}</h2>
-<a [href]="swepcoSite" target="_blank">Swepco Source</a>
+<h2 class="">{{schedule?.date.fullDate}}</h2>
+
+<a [href]="genService.swepcoSource" target="_blank">Swepco Source</a>
 
 <ng-container *ngIf="loadingState !== 'loaded'; else doneLoading">
-  <div class="pt-4" *ngIf="loadingState === 'loading'">
+  <div class="pt-6" *ngIf="loadingState === 'loading'">
     <mat-spinner class="mx-auto"></mat-spinner>
   </div>
   <ng-container *ngIf="loadingState == 'failed'">
@@ -28,10 +24,10 @@
   </ng-container>
 </ng-container>
 <ng-template #doneLoading>
-  <ng-container *ngIf="isTableView; else isGridView">
-    <app-table-view [projectDetails]="genSchedule?.projectDetails"></app-table-view>
+  <ng-container *ngIf="isTableView; else showGridView">
+    <app-table-view [projectDetails]="schedule?.projectDetails" [columns]="displayCols"></app-table-view>
   </ng-container>
-  <ng-template #isGridView>
+  <ng-template #showGridView>
     <app-grid-view></app-grid-view>
   </ng-template>
 </ng-template>

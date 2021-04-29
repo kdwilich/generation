@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { WeekDay, ProjectDetails, LoadingState } from './generation.interface';
+import { ProjectDetails, LoadingState } from './generation.interface';
 import { catchError, retry } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
+import { DayService } from './day.service';
+import { WeekDay } from './day.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -10,43 +12,57 @@ import { EMPTY } from 'rxjs';
 export class GenerationService {
   private corsProxy = 'https://cors-anywhere-kw.herokuapp.com/';
   private swepcoGenUrl = 'https://www.swpa.gov/gen/';
+  private swepcoEndpoint;
   public loadingState: LoadingState; // 0: loaded, 1: loading, 2: failed to load
-  public swepcoSource: string;
+  public schedule;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
-  public async getGenSchedule(day: WeekDay) {
-    this.swepcoSource = this.swepcoGenUrl + day + '.htm';
+  get swepcoSource(): string {
+    return this.swepcoEndpoint;
+  }
+
+  set swepcoSource(day: string) {
+    this.swepcoEndpoint = this.swepcoGenUrl + day + '.htm';
+  }
+
+  private handleTables(html) {
+    if(html) {
+      const date = this.findDate(html);
+
+      const rawGenSchedules = this.findTable(html, ['HR ', 'TOT ']);
+      const genSchedules = this.createGenScheduleObj(rawGenSchedules);
+
+      const rawProjectDetails = this.findTable(html, ['No. ', 'The project table ']).slice(1);
+      const projectDetails = this.createProjectDetailsObj(rawProjectDetails, genSchedules);
+
+      return { date, projectDetails }
+    }
+    return undefined;
+  }
+
+  private scheduleRequest(day) {
     this.loadingState = 'loading';
-    return await this.http
-      .get(this.corsProxy + this.swepcoSource, { responseType: 'text' })
-      .pipe(
-        retry(3),
-        catchError((err) => {
-          console.log('Error loading content:', err);
-          return EMPTY
-        })
-      ).toPromise()
-      .then(htmlStr => {
-        if(htmlStr) {
-          const date = this.findDate(htmlStr);
+    this.swepcoSource = day;
+    return this.http.get(this.corsProxy + this.swepcoSource, { responseType: 'text' })
+      .pipe(retry(3), catchError((err) => {
+        console.log('Error loading content:', err);
+        return EMPTY;
+      }));
+  }
 
-          const rawGenSchedules = this.findTable(htmlStr, ['HR ', 'TOT ']);
-          const genSchedules = this.createGenScheduleObj(rawGenSchedules);
+  private handleLoadingState = (data) => data ? this.loadingState = 'loaded' : this.loadingState = 'failed';
 
-          const rawProjectDetails = this.findTable(htmlStr, ['No. ', 'The project table ']).slice(1);
-          const projectDetails = this.createProjectDetailsObj(rawProjectDetails, genSchedules);
-
-          return { date, projectDetails }
-        } else {
-          return undefined;
-        }
-      })
+  public async getSchedule(day) {
+    this.schedule = await this.scheduleRequest(day).toPromise()
+      .then(html => this.handleTables(html))
       .then(data => {
-        data ? this.loadingState = 'loaded' : this.loadingState = 'failed';
+        this.handleLoadingState(data);
         return data;
       })
       .catch(err => console.log(err));
+
+    console.log(this.schedule);
   }
 
   /**
@@ -154,7 +170,6 @@ export class GenerationService {
         })
       }
 
-
       summary = 'Generating from ' + rangeStr.replace(/(am|pm)(-\d+(?:\1))/g, '$2');
     } else {
       summary = 'Not generating';
@@ -187,9 +202,9 @@ export class GenerationService {
     projects.map((project: string, colIndex: number) => {
       if (project !== 'HR') {
         if (project === 'OZK') {
-          genScheduleObj['OZD'] = rawGenSchedule.map(row => row[colIndex])
+          genScheduleObj['OZD'] = rawGenSchedule.map(row => parseInt(row[colIndex]))
         } else {
-          genScheduleObj[project] = rawGenSchedule.map(row => row[colIndex])
+          genScheduleObj[project] = rawGenSchedule.map(row => parseInt(row[colIndex]))
         }
       }
     })

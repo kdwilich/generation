@@ -7,18 +7,22 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { NavComponent } from './nav/nav.component';
+import { HeaderComponent } from './header/header.component';
 import { DamsModule } from './dams/dams.module';
 import { ProjectListModule } from './site-list/project-list.module';
-import { GenerationScheduleComponent } from './generation-schedule/generation-schedule.component';
+import { ButtonGroupComponent } from './shared/button-group/button-group.component';
+import { TooltipDirective } from './shared/tooltip/tooltip.directive';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavComponent,
-    GenerationScheduleComponent
+    HeaderComponent,
+    ButtonGroupComponent,
+    TooltipDirective
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
@@ -29,6 +33,7 @@ import { GenerationScheduleComponent } from './generation-schedule/generation-sc
     MatToolbarModule
   ],
   providers: [],
+  exports: [TooltipDirective],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
