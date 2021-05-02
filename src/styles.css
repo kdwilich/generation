@@ -9,6 +9,7 @@ body {
 }
 body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  overflow: hidden;
 }
 
 ::-webkit-scrollbar {
@@ -31,6 +32,12 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+main {
+  overflow: auto;
+  height: calc(100% - var(--header-height));
+}
+
 
 button {
   background-color: var(--primary);

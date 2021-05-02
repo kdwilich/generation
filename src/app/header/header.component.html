@@ -1,13 +1,3 @@
 <header class="header">
   <h2>Generation Report</h2>
-
-  <div class="btn-group">
-    <button
-      *ngFor="let day of weekDays"
-      [ngClass]="{'selected': day.value === dayService.selectedDay}"
-      (click)="changeDay(day.value)"
-    >
-      {{ day.label }}
-    </button>
-  </div>
 </header>

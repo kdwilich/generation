@@ -1,0 +1,18 @@
+.btn-group button {
+  float: left;
+}
+
+.btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.btn-group button:not(:last-child) {
+  border-right: none;
+}
+
+.btn-group button:hover,
+.btn-group .selected {
+  background-color: var(--primary-darker);
+}

@@ -14,5 +14,8 @@
   --default: #546461;
   --gray: #F2F2F2;
   --hour-rate-bar: #8A9DBC;
-  --tool-tip: #2f2f2f
+  --tool-tip: #2f2f2f;
+
+  --header-height: 64px;
+
 }

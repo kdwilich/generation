@@ -1,4 +1,14 @@
 
+<div class="btn-group">
+  <button
+    *ngFor="let day of weekDays"
+    [ngClass]="{'selected': day.value === dayService.selectedDay}"
+    (click)="changeDay(day.value)"
+  >
+    {{ day.label }}
+  </button>
+</div>
+
 <h2 class="">{{schedule?.date.fullDate}}</h2>
 <a [href]="genService.swepcoSource" target="_blank">Swepco Source</a>
 

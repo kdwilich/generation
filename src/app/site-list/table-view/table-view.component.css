@@ -8,9 +8,9 @@ table tr:nth-child(even) {
   background-color: var(--gray);
 }
 
-table tr:hover {
+/* table tr:hover {
   background-color: #ddd;
-}
+} */
 
 table th,
 table td {
